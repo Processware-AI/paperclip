@@ -397,7 +397,7 @@ npx paperclipai issue update <issue-id> --assignee-agent-id <other-agent-id> --s
 
 5. Cleanup: mark temporary issues done/cancelled with a clear note.
 
-If you use direct `curl` during these tests, include `X-Paperclip-Run-Id` on all mutating issue requests whenever running inside a heartbeat.
+If you use direct API calls during these tests, include `X-Paperclip-Run-Id` on all mutating issue requests whenever running inside a heartbeat. For any request body with non-ASCII text, use `node skills/paperclip/pc-api.js` instead of curl (see Windows UTF-8 encoding note in Authentication above).
 
 ## Full Reference
 
