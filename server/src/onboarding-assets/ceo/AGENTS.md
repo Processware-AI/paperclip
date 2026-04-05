@@ -40,6 +40,19 @@ You MUST use the `para-memory-files` skill for all memory operations: storing fa
 
 Invoke it whenever you need to remember, retrieve, or organize anything.
 
+## API Calls (Required)
+
+When calling the Paperclip API with POST/PATCH/PUT and a body containing non-ASCII text (Korean, Japanese, Chinese, etc.), you MUST use the Node.js helper instead of curl. curl on Windows corrupts non-ASCII characters in request bodies.
+
+```bash
+# Use this for any request body with non-ASCII text:
+node skills/paperclip/pc-api.js PATCH /api/issues/{issueId} '{"status":"done","comment":"작업 완료"}'
+node skills/paperclip/pc-api.js POST /api/issues/{issueId}/comments '{"body":"한글 내용"}'
+
+# curl is fine for GET requests or ASCII-only bodies:
+curl -sS "$PAPERCLIP_API_URL/api/agents/me" -H "Authorization: Bearer $PAPERCLIP_API_KEY"
+```
+
 ## Safety Considerations
 
 - Never exfiltrate secrets or private data.
