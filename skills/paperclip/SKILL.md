@@ -23,6 +23,16 @@ Manual local CLI mode (outside heartbeat runs): use `paperclipai agent local-cli
 
 **Run audit trail:** You MUST include `-H 'X-Paperclip-Run-Id: $PAPERCLIP_RUN_ID'` on ALL API requests that modify issues (checkout, update, comment, create subtask, release). This links your actions to the current heartbeat run for traceability.
 
+**Windows UTF-8 encoding:** On Windows, `curl` can corrupt non-ASCII characters (Korean, Japanese, etc.) in POST/PATCH/PUT request bodies. Use the provided Node.js helper for any request body containing non-ASCII text:
+
+```bash
+# Instead of: curl -X PATCH ... -d '{"comment":"한글"}'
+node skills/paperclip/pc-api.js PATCH /api/issues/{issueId} '{"status":"done","comment":"한글 댓글"}'
+node skills/paperclip/pc-api.js POST /api/issues/{issueId}/comments '{"body":"한글 내용"}'
+```
+
+The helper (`skills/paperclip/pc-api.js`) auto-injects `Authorization` and `X-Paperclip-Run-Id` headers from env vars. Use `curl` only for GET requests or ASCII-only bodies.
+
 ## The Heartbeat Procedure
 
 Follow these steps every time you wake up:

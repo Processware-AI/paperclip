@@ -991,19 +991,19 @@ export async function runChildProcess(
               }, opts.timeoutSec * 1000)
             : null;
 
-        child.stdout?.on("data", (chunk: unknown) => {
-          const text = String(chunk);
-          stdout = appendWithCap(stdout, text);
+        child.stdout?.setEncoding("utf8");
+        child.stdout?.on("data", (chunk: string) => {
+          stdout = appendWithCap(stdout, chunk);
           logChain = logChain
-            .then(() => opts.onLog("stdout", text))
+            .then(() => opts.onLog("stdout", chunk))
             .catch((err) => onLogError(err, runId, "failed to append stdout log chunk"));
         });
 
-        child.stderr?.on("data", (chunk: unknown) => {
-          const text = String(chunk);
-          stderr = appendWithCap(stderr, text);
+        child.stderr?.setEncoding("utf8");
+        child.stderr?.on("data", (chunk: string) => {
+          stderr = appendWithCap(stderr, chunk);
           logChain = logChain
-            .then(() => opts.onLog("stderr", text))
+            .then(() => opts.onLog("stderr", chunk))
             .catch((err) => onLogError(err, runId, "failed to append stderr log chunk"));
         });
 

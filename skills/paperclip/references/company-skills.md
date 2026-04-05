@@ -50,34 +50,22 @@ Import using a **skills.sh URL**, a key-style source string, a GitHub URL, or a 
 ### Example: skills.sh import (preferred)
 
 ```sh
-curl -sS -X POST "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/skills/import" \
-  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "source": "https://skills.sh/google-labs-code/stitch-skills/design-md"
-  }'
+node skills/paperclip/pc-api.js POST /api/companies/$PAPERCLIP_COMPANY_ID/skills/import \
+  '{"source":"https://skills.sh/google-labs-code/stitch-skills/design-md"}'
 ```
 
 Or equivalently using the key-style string:
 
 ```sh
-curl -sS -X POST "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/skills/import" \
-  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "source": "google-labs-code/stitch-skills/design-md"
-  }'
+node skills/paperclip/pc-api.js POST /api/companies/$PAPERCLIP_COMPANY_ID/skills/import \
+  '{"source":"google-labs-code/stitch-skills/design-md"}'
 ```
 
 ### Example: GitHub import
 
 ```sh
-curl -sS -X POST "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/skills/import" \
-  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "source": "https://github.com/vercel-labs/agent-browser"
-  }'
+node skills/paperclip/pc-api.js POST /api/companies/$PAPERCLIP_COMPANY_ID/skills/import \
+  '{"source":"https://github.com/vercel-labs/agent-browser"}'
 ```
 
 You can also use source strings such as:
@@ -89,10 +77,7 @@ You can also use source strings such as:
 If the task is to discover skills from the company project workspaces first:
 
 ```sh
-curl -sS -X POST "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/skills/scan-projects" \
-  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{}'
+node skills/paperclip/pc-api.js POST /api/companies/$PAPERCLIP_COMPANY_ID/skills/scan-projects '{}'
 ```
 
 ## Inspect What Was Installed
@@ -123,14 +108,8 @@ curl -sS "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/skills/<skill-i
 The server persists canonical company skill keys.
 
 ```sh
-curl -sS -X POST "$PAPERCLIP_API_URL/api/agents/<agent-id>/skills/sync" \
-  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "desiredSkills": [
-      "vercel-labs/agent-browser/agent-browser"
-    ]
-  }'
+node skills/paperclip/pc-api.js POST /api/agents/<agent-id>/skills/sync \
+  '{"desiredSkills":["vercel-labs/agent-browser/agent-browser"]}'
 ```
 
 If you need the current state first:
@@ -145,39 +124,15 @@ curl -sS "$PAPERCLIP_API_URL/api/agents/<agent-id>/skills" \
 Use the same company skill keys or references in `desiredSkills` when hiring or creating an agent:
 
 ```sh
-curl -sS -X POST "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/agent-hires" \
-  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "QA Browser Agent",
-    "role": "qa",
-    "adapterType": "codex_local",
-    "adapterConfig": {
-      "cwd": "/abs/path/to/repo"
-    },
-    "desiredSkills": [
-      "agent-browser"
-    ]
-  }'
+node skills/paperclip/pc-api.js POST /api/companies/$PAPERCLIP_COMPANY_ID/agent-hires \
+  '{"name":"QA Browser Agent","role":"qa","adapterType":"codex_local","adapterConfig":{"cwd":"/abs/path/to/repo"},"desiredSkills":["agent-browser"]}'
 ```
 
 For direct create without approval:
 
 ```sh
-curl -sS -X POST "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/agents" \
-  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "QA Browser Agent",
-    "role": "qa",
-    "adapterType": "codex_local",
-    "adapterConfig": {
-      "cwd": "/abs/path/to/repo"
-    },
-    "desiredSkills": [
-      "agent-browser"
-    ]
-  }'
+node skills/paperclip/pc-api.js POST /api/companies/$PAPERCLIP_COMPANY_ID/agents \
+  '{"name":"QA Browser Agent","role":"qa","adapterType":"codex_local","adapterConfig":{"cwd":"/abs/path/to/repo"},"desiredSkills":["agent-browser"]}'
 ```
 
 ## Notes
