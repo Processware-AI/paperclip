@@ -69,23 +69,22 @@ curl -sS "$PAPERCLIP_API_URL/llms/agent-icons.txt" \
 
 7. Submit hire request.
 
+Use `node skills/paperclip/pc-api.js` instead of `curl` for bodies that may contain non-ASCII text (names, capabilities, prompts in Korean etc.) — curl on Windows corrupts UTF-8 in request bodies.
+
 ```sh
-curl -sS -X POST "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/agent-hires" \
-  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "CTO",
-    "role": "cto",
-    "title": "Chief Technology Officer",
-    "icon": "crown",
-    "reportsTo": "<ceo-agent-id>",
-    "capabilities": "Owns technical roadmap, architecture, staffing, execution",
-    "desiredSkills": ["vercel-labs/agent-browser/agent-browser"],
-    "adapterType": "codex_local",
-    "adapterConfig": {"cwd": "/abs/path/to/repo", "model": "o4-mini"},
-    "runtimeConfig": {"heartbeat": {"enabled": true, "intervalSec": 300, "wakeOnDemand": true}},
-    "sourceIssueId": "<issue-id>"
-  }'
+node skills/paperclip/pc-api.js POST /api/companies/$PAPERCLIP_COMPANY_ID/agent-hires '{
+  "name": "CTO",
+  "role": "cto",
+  "title": "Chief Technology Officer",
+  "icon": "crown",
+  "reportsTo": "<ceo-agent-id>",
+  "capabilities": "Owns technical roadmap, architecture, staffing, execution",
+  "desiredSkills": ["vercel-labs/agent-browser/agent-browser"],
+  "adapterType": "codex_local",
+  "adapterConfig": {"cwd": "/abs/path/to/repo", "model": "o4-mini"},
+  "runtimeConfig": {"heartbeat": {"enabled": true, "intervalSec": 300, "wakeOnDemand": true}},
+  "sourceIssueId": "<issue-id>"
+}'
 ```
 
 8. Handle governance state:
@@ -97,19 +96,14 @@ curl -sS -X POST "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/agent-h
 curl -sS "$PAPERCLIP_API_URL/api/approvals/<approval-id>" \
   -H "Authorization: Bearer $PAPERCLIP_API_KEY"
 
-curl -sS -X POST "$PAPERCLIP_API_URL/api/approvals/<approval-id>/comments" \
-  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"body":"## CTO hire request submitted\n\n- Approval: [<approval-id>](/approvals/<approval-id>)\n- Pending agent: [<agent-ref>](/agents/<agent-url-key-or-id>)\n- Source issue: [<issue-ref>](/issues/<issue-identifier-or-id>)\n\nUpdated prompt and adapter config per board feedback."}'
+node skills/paperclip/pc-api.js POST /api/approvals/<approval-id>/comments \
+  '{"body":"## CTO hire request submitted\n\n- Approval: [<approval-id>](/approvals/<approval-id>)\n- Pending agent: [<agent-ref>](/agents/<agent-url-key-or-id>)\n- Source issue: [<issue-ref>](/issues/<issue-identifier-or-id>)\n\nUpdated prompt and adapter config per board feedback."}'
 ```
 
 If the approval already exists and needs manual linking to the issue:
 
 ```sh
-curl -sS -X POST "$PAPERCLIP_API_URL/api/issues/<issue-id>/approvals" \
-  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"approvalId":"<approval-id>"}'
+node skills/paperclip/pc-api.js POST /api/issues/<issue-id>/approvals '{"approvalId":"<approval-id>"}'
 ```
 
 After approval is granted, run this follow-up loop:
